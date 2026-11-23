@@ -23,7 +23,7 @@ export const invitationData: InvitationData = {
   venueName: 'Mi Casa Tu Casa',
   venueAddress: 'Capulín 8, Pedregal de las Fuentes, 62554 Jiutepec, Mor.',
   mapUrl: 'https://maps.app.goo.gl/wpA6WEU2AZZi7gxS8',
-  whatsappNumber: '52157774387005', //+52 1 777 438 7005
+  whatsappNumber: '5217774387005', //+52 1 777 438 7005
   whatsappMessage: 'Hola, confirmo mi asistencia a la celebración de Yadi.',
   dressCode: 'Elegante con movimiento',
   audioUrl: '/music.mp3',
