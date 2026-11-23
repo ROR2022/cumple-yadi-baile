@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
+import Image from 'next/image'
 import { ArrowDown, ArrowUpRight, CalendarDays, Check, MapPin, Pause, Play, Share2, Volume2, VolumeX } from 'lucide-react'
 import { invitationData as data } from '@/lib/invitation-data'
 
@@ -11,7 +12,7 @@ function RsvpButton({ className = '' }: { className?: string }) {
   return <a className={`button button-gold ${className}`} href={href} target="_blank" rel="noreferrer"><span>Confirmar asistencia</span><ArrowUpRight aria-hidden="true" size={16} /></a>
 }
 
-function AudioController({ opened }: { opened: boolean }) {
+function AudioController({ opened, pauseRequest, spotifyVisible }: { opened: boolean; pauseRequest: number; spotifyVisible: boolean }) {
   const audioRef = useRef<HTMLAudioElement>(null)
   const [state, setState] = useState<AudioState>('off')
   const [muted, setMuted] = useState(false)
@@ -25,8 +26,13 @@ function AudioController({ opened }: { opened: boolean }) {
     if (!opened || !audioRef.current) return
     void audioRef.current.play().then(() => setState('playing')).catch(() => setState('error'))
   }, [opened])
+  useEffect(() => {
+    if (!pauseRequest || !audioRef.current) return
+    audioRef.current.pause()
+    setState((current) => current === 'playing' ? 'paused' : current)
+  }, [pauseRequest])
   return <div className="audio-control"><audio ref={audioRef} src={data.audioUrl} loop preload="none" onError={() => setState('error')} onEnded={() => setState('paused')} />
-    <button className="audio-button" type="button" onClick={() => { if (state === 'error' || state === 'off') void toggle(); else if (state === 'playing') void toggle(); else void toggle() }} aria-label={state === 'playing' ? 'Pausar música' : 'Reproducir música'} title={state === 'error' ? 'Música próximamente' : state === 'playing' ? 'Pausar música' : 'Reproducir música'}>
+    <button className="audio-button" type="button" disabled={spotifyVisible} onClick={() => { if (state === 'error' || state === 'off') void toggle(); else if (state === 'playing') void toggle(); else void toggle() }} aria-label={spotifyVisible ? 'Spotify está activo' : state === 'playing' ? 'Pausar música' : 'Reproducir música'} title={spotifyVisible ? 'La música ambiente está pausada mientras Spotify está visible' : state === 'error' ? 'Música próximamente' : state === 'playing' ? 'Pausar música' : 'Reproducir música'}>
       {state === 'playing' ? <Pause size={15} /> : <Play size={15} />}
     </button>
     <span className="audio-label">{state === 'error' ? 'Música próximamente' : state === 'playing' ? 'En la pista' : 'Música'}</span>
@@ -53,7 +59,7 @@ function EnvelopeIntro({ onOpen }: { onOpen: () => void }) {
   </div>
 }
 
-function HeroSection({ onScroll, opened }: { onScroll: () => void; opened: boolean }) {
+function HeroSection({ onScroll, opened, pauseRequest, spotifyVisible }: { onScroll: () => void; opened: boolean; pauseRequest: number; spotifyVisible: boolean }) {
   return <section className="hero section-dark" id="inicio">
     <div className="hero-image" aria-hidden="true" style={{ backgroundImage: `url(${data.heroImage})` }} />
     <div className="hero-orbit orbit-one" /><div className="hero-orbit orbit-two" /><div className="spotlight" />
@@ -67,11 +73,32 @@ function HeroSection({ onScroll, opened }: { onScroll: () => void; opened: boole
     </div>
     <div className="hero-side-note"><span>SU PISTA, SU MOVIMIENTO</span><b>01</b></div>
     <div className="hero-bottom"><span>BAILE · ENCUENTRO · CELEBRACIÓN</span><span className="scroll-mark">DESLIZA <span>↓</span></span><span>26° · 8PM</span></div>
-    <AudioController opened={opened} />
+    <AudioController opened={opened} pauseRequest={pauseRequest} spotifyVisible={spotifyVisible} />
   </section>
 }
 
 function EditorialQuote() { return <section className="quote-section section-cream" id="la-noche"><div className="quote-index">02 <span>—</span> EL MOVIMIENTO</div><div className="quote-layout"><div className="quote-mark">“</div><div><h2>Hay quien<br />camina.<br /><em>Ella baila.</em></h2><svg className="dance-line" viewBox="0 0 380 70" fill="none" aria-hidden="true"><path d="M2 50C61 57 74 12 129 18c53 5 36 54 92 39 49-13 43-48 91-43 27 3 44 15 66 5" stroke="currentColor" strokeWidth="1.2" pathLength="1" /></svg><p className="quote-support">Una celebración para compartir el ritmo, los abrazos y todas esas canciones que merecen una pista.</p></div><div className="quote-side">EL CUERPO<br />RECUERDA<br />EL RITMO</div></div><div className="quote-footer"><span>UNA VIDA EN MOVIMIENTO</span><span>✳</span><span>JIUTEPEC · 2026</span></div></section> }
+
+function PersonalPhotoSection() {
+  return <section className="personal-photo-section section-cream">
+    <div className="personal-photo-copy">
+      <span className="eyebrow">03 / LA PROTAGONISTA</span>
+      <h2>Una vida<br />en <em>movimiento.</em></h2>
+      <p>La celebración también vive en los momentos sencillos, en las sonrisas y en las ganas de seguir disfrutando cada paso.</p>
+      <span className="personal-photo-note">UN MOMENTO PARA RECORDAR</span>
+    </div>
+    <figure className="personal-photo-frame">
+      <Image
+        src="/yadiBaile01.jpeg"
+        alt="Yadi disfrutando un momento al aire libre con los brazos levantados"
+        width={1080}
+        height={1409}
+        sizes="(max-width: 700px) 88vw, 42vw"
+      />
+      <figcaption>YADI · SIEMPRE EN MOVIMIENTO</figcaption>
+    </figure>
+  </section>
+}
 
 function CountdownSection() {
   const [remaining, setRemaining] = useState<number | null>(null)
@@ -95,14 +122,27 @@ function VenueSection() { return <section className="venue-section section-dark"
 
 function DressCodeSection() { return <section className="dress-section section-cream"><span className="eyebrow">06 / EL ESTILO</span><div className="dress-frame"><div className="dress-orbit" /><span className="dress-number">✳</span><div><p className="dress-kicker">UNA PISTA PARA SER TÚ</p><h2>Elegante con<br /><em>movimiento</em></h2><p>Ven como te sientas increíble. Tacones de baile, zapatos cómodos o cualquier look que te permita disfrutar la pista.</p></div><span className="dress-side">SIN REGLAS,<br />CON RITMO.</span></div></section> }
 
-function PlaylistSection() {
-  return <section className="playlist-section section-dark">
+function PlaylistSection({ onEngage, onVisibilityChange }: { onEngage: () => void; onVisibilityChange: (visible: boolean) => void }) {
+  const sectionRef = useRef<HTMLElement>(null)
+  useEffect(() => {
+    const section = sectionRef.current
+    if (!section) return
+    const observer = new IntersectionObserver(([entry]) => {
+      const visible = entry.isIntersecting
+      onVisibilityChange(visible)
+      if (visible) onEngage()
+    }, { threshold: 0.35 })
+    observer.observe(section)
+    return () => observer.disconnect()
+  }, [onEngage, onVisibilityChange])
+
+  return <section ref={sectionRef} className="playlist-section section-dark">
     <div className="playlist-copy">
       <span className="eyebrow"><span className="eyebrow-dash" />EL PRIMER COMPÁS</span>
       <h2>La música<br /><em>de la noche</em></h2>
       <p>Toda celebración tiene una canción que la hace comenzar.</p>
     </div>
-    <div className="spotify-embed">
+    <div className="spotify-embed" onPointerDown={onEngage} onFocusCapture={onEngage}>
       <iframe
         title="Playlist de Spotify para la celebración de Yadi"
         src="https://open.spotify.com/embed/playlist/0I3nH7lUGgcv06GrW1fVZx?utm_source=generator&si=943e9645c7bc4e05"
@@ -110,6 +150,7 @@ function PlaylistSection() {
         allowFullScreen
         loading="lazy"
       />
+      <p className="spotify-note">Al reproducir Spotify, la música de ambiente se pausará.</p>
     </div>
   </section>
 }
@@ -128,7 +169,11 @@ function SiteNavigation() { return <nav className="site-nav" aria-label="Navegac
 export default function Invitation() {
   const [isOpened, setIsOpened] = useState(false)
   const [introDone, setIntroDone] = useState(false)
+  const [spotifyEngagement, setSpotifyEngagement] = useState(0)
+  const [spotifyVisible, setSpotifyVisible] = useState(false)
   const showInvite = () => { setIsOpened(true); window.setTimeout(() => setIntroDone(true), 1050) }
   const scrollToQuote = () => document.getElementById('la-noche')?.scrollIntoView({ behavior: 'smooth' })
-  return <main className="invitation-shell">{!introDone && <EnvelopeIntro onOpen={showInvite} />}<div className={`invitation-content ${isOpened ? 'content-visible' : ''}`} aria-hidden={!isOpened}><SiteNavigation /><HeroSection onScroll={scrollToQuote} opened={isOpened} /><EditorialQuote /><CountdownSection /><NightSchedule /><VenueSection /><DressCodeSection /><PlaylistSection /><RsvpSection /><ClosingSection /></div></main>
+  const handleSpotifyEngage = useCallback(() => setSpotifyEngagement((current) => current + 1), [])
+  const handleSpotifyVisibility = useCallback((visible: boolean) => setSpotifyVisible(visible), [])
+  return <main className="invitation-shell">{!introDone && <EnvelopeIntro onOpen={showInvite} />}<div className={`invitation-content ${isOpened ? 'content-visible' : ''}`} aria-hidden={!isOpened}><SiteNavigation /><HeroSection onScroll={scrollToQuote} opened={isOpened} pauseRequest={spotifyEngagement} spotifyVisible={spotifyVisible} /><EditorialQuote /><PersonalPhotoSection /><CountdownSection /><NightSchedule /><VenueSection /><DressCodeSection /><PlaylistSection onEngage={handleSpotifyEngage} onVisibilityChange={handleSpotifyVisibility} /><RsvpSection /><ClosingSection /></div></main>
 }
