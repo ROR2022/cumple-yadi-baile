@@ -21,8 +21,8 @@ export const invitationData: InvitationData = {
   dateISO: '2026-12-06T20:00:00',
   timeLabel: '7:00 PM',
   venueName: 'Mi Casa Tu Casa',
-  venueAddress: 'Capulín 8, Pedregal de las Fuentes, 62554 Jiutepec, Mor.',
-  mapUrl: 'https://maps.app.goo.gl/wpA6WEU2AZZi7gxS8',
+  venueAddress: 'Nopalera 8, El Calvario, 62764 Emiliano Zapata, Mor.',
+  mapUrl: 'https://maps.app.goo.gl/kfiBhRxutVCSoiPc7',
   whatsappNumber: '5217774387005', //+52 1 777 438 7005
   whatsappMessage: 'Hola, confirmo mi asistencia a la celebración de Yadi.',
   dressCode: 'Elegante con movimiento',
