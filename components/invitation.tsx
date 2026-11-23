@@ -72,7 +72,7 @@ function HeroSection({ onScroll, opened, pauseRequest, spotifyVisible }: { onScr
       <button className="discover-link" type="button" onClick={onScroll}>Descubrir la noche <ArrowDown size={15} /></button>
     </div>
     <div className="hero-side-note"><span>SU PISTA, SU MOVIMIENTO</span><b>01</b></div>
-    <div className="hero-bottom"><span>BAILE · ENCUENTRO · CELEBRACIÓN</span><span className="scroll-mark">DESLIZA <span>↓</span></span><span>26° · 8PM</span></div>
+    <div className="hero-bottom"><span>BAILE · ENCUENTRO · CELEBRACIÓN</span><span className="scroll-mark">DESLIZA <span>↓</span></span><span>26° · {data.timeLabel.replace(':00', '')}</span></div>
     <AudioController opened={opened} pauseRequest={pauseRequest} spotifyVisible={spotifyVisible} />
   </section>
 }
@@ -107,14 +107,14 @@ function CountdownSection() {
   const status = remaining === null ? 'loading' : remaining > 0 ? 'before' : Date.now() < end ? 'arrived' : 'ended'
   const total = Math.max(0, remaining ?? 0)
   const values = [Math.floor(total / 86400000), Math.floor(total / 3600000) % 24, Math.floor(total / 60000) % 60, Math.floor(total / 1000) % 60]
-  return <section className="countdown-section section-dark"><div className="countdown-header"><span className="eyebrow"><span className="eyebrow-dash" />MARCA EL COMPÁS</span><span>03 / 06</span></div><div className="countdown-main"><p className="countdown-beat">5 <i>·</i> 6 <i>·</i> 7 <i>·</i> 8</p><h2>{status === 'arrived' ? 'La noche llegó' : status === 'ended' ? 'Gracias por compartir la pista' : 'Faltan pocos pasos para encontrarnos en la pista.'}</h2>{status === 'before' && <div className="countdown-grid" aria-label="Cuenta regresiva">{values.map((value, index) => <div className="count-unit" key={index}><span className="count-number">{String(value).padStart(2, '0')}</span><span className="count-label">{['DÍAS', 'HORAS', 'MINUTOS', 'SEGUNDOS'][index]}</span></div>)}</div>}</div><div className="countdown-footer"><span>EL TIEMPO TAMBIÉN BAILA</span><span>✳</span><span>14 · 03 · 26</span></div></section>
+  return <section className="countdown-section section-dark"><div className="countdown-header"><span className="eyebrow"><span className="eyebrow-dash" />MARCA EL COMPÁS</span><span>03 / 06</span></div><div className="countdown-main"><p className="countdown-beat">5 <i>·</i> 6 <i>·</i> 7 <i>·</i> 8</p><h2>{status === 'arrived' ? 'La noche llegó' : status === 'ended' ? 'Gracias por compartir la pista' : 'Faltan pocos pasos para encontrarnos en la pista.'}</h2>{status === 'before' && <div className="countdown-grid" aria-label="Cuenta regresiva">{values.map((value, index) => <div className="count-unit" key={index}><span className="count-number">{String(value).padStart(2, '0')}</span><span className="count-label">{['DÍAS', 'HORAS', 'MINUTOS', 'SEGUNDOS'][index]}</span></div>)}</div>}</div><div className="countdown-footer"><span>EL TIEMPO TAMBIÉN BAILA</span><span>✳</span><span>06 · 12 · 26</span></div></section>
 }
 
 const schedule = [
-  ['8:00 PM', 'Bienvenida, abrazos y primeros brindis.'],
-  ['8:45 PM', 'A celebrar a Yadi.'],
-  ['9:15 PM', 'Música y pista abierta.'],
-  ['10:30 PM', 'Pastel, fotografías y recuerdos.'],
+  ['3:00 PM', 'Bienvenida, abrazos y primeros brindis.'],
+  ['3:45 PM', 'A celebrar a Yadi.'],
+  ['4:15 PM', 'Música y pista abierta.'],
+  ['5:30 PM', 'Pastel, fotografías y recuerdos.'],
 ]
 function NightSchedule() { return <section className="schedule-section section-cream"><div className="section-heading"><span className="eyebrow">04 / EL PROGRAMA</span><h2>El ritmo<br /><em>de la noche</em></h2><p>Una noche sin prisa, con espacio<br />para cada canción.</p></div><div className="schedule-list">{schedule.map(([time, text], index) => <article className="schedule-item" key={time}><span className="schedule-no">0{index + 1}</span><span className="schedule-time">{time}</span><span className="schedule-text">{text}</span><span className="schedule-star">✳</span></article>)}</div><div className="schedule-endnote">EL MEJOR MOMENTO ES EL QUE BAILAMOS JUNTOS.</div></section> }
 
