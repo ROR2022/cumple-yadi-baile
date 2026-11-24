@@ -178,7 +178,10 @@ function CreatorCta() {
   </section>
 }
 
-function SiteNavigation() { return <nav className="site-nav" aria-label="Navegación principal"><a className="nav-monogram" href="#inicio" aria-label="Yadi, inicio">Y<span>.</span></a><div><a href="#inicio">Inicio</a><a href="#la-noche">La noche</a><a href="#lugar">Lugar</a><a href="#confirmacion">Confirmación</a></div><a className="nav-date" href="#confirmacion">14 <i>·</i> 03 <i>·</i> 26</a></nav> }
+function SiteNavigation() {
+  const [year, month, day] = data.dateISO.split('T')[0].split('-')
+  return <nav className="site-nav" aria-label="Navegación principal"><a className="nav-monogram" href="#inicio" aria-label="Yadi, inicio">Y<span>.</span></a><div><a href="#inicio">Inicio</a><a href="#la-noche">La noche</a><a href="#lugar">Lugar</a><a href="#confirmacion">Confirmación</a></div><a className="nav-date" href="#confirmacion">{day} <i>·</i> {month} <i>·</i> {year.slice(-2)}</a></nav>
+}
 
 export default function Invitation() {
   const [isOpened, setIsOpened] = useState(false)
